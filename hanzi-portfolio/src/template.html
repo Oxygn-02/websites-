@@ -372,6 +372,29 @@ function lum(h){ const n=parseInt(h.slice(1),16); return .3*(n>>16&255)+.59*(n>>
 function rnd(seed){ return ()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; }; }
 const pick=(k,f)=>{ const p=[...PAL[k]].sort((a,b)=>lum(a)-lum(b)); return f==='light'?p[p.length-1]:f==='dark'?p[0]:p[Math.floor(p.length/2)]; };
 
+/* Real light, not shapes. A beam is built from many faint, narrowing layers, so it is brightest along
+   its core and at the lamp, falls off along its length, and has soft edges. Each beam is cached as a
+   sprite, so drawing it every frame costs one drawImage. */
+const BEAMS=new Map();
+function beamSprite(len,w0,w1,rgb){
+  const key=[len|0,w0|0,w1|0,rgb].join('/'); let sp=BEAMS.get(key); if(sp) return sp;
+  if(BEAMS.size>60) BEAMS.clear();
+  const W=Math.ceil(w1*2+8), H=Math.max(2,Math.ceil(len)), L=12;
+  sp=document.createElement('canvas'); sp.width=W; sp.height=H; const g=sp.getContext('2d'), cx=W/2, a=.05;
+  for(let i=0;i<L;i++){ const q=i/(L-1), t0=w0*(1-q*.8), t1=w1*(1-q*.88);
+    const gr=g.createLinearGradient(0,0,0,H); gr.addColorStop(0,`rgba(${rgb},${a})`); gr.addColorStop(.3,`rgba(${rgb},${a*.6})`); gr.addColorStop(.75,`rgba(${rgb},${a*.18})`); gr.addColorStop(1,`rgba(${rgb},0)`);
+    g.fillStyle=gr; g.beginPath(); g.moveTo(cx-t0,0); g.lineTo(cx+t0,0); g.lineTo(cx+t1,H); g.lineTo(cx-t1,H); g.closePath(); g.fill(); }
+  BEAMS.set(key,sp); return sp;
+}
+// a beam from (x,y): angle 0 points straight down; len, near width w0, far width w1 (half-widths)
+function softBeam(c,x,y,ang,len,w0,w1,rgb,alpha){ const sp=beamSprite(len,w0,w1,rgb); c.save(); c.translate(x,y); c.rotate(ang); c.globalAlpha*=alpha; c.drawImage(sp,-sp.width/2,0); c.restore(); }
+// the angle that points a softBeam from (x0,y0) at (x1,y1), and its length
+const aimAt=(x0,y0,x1,y1)=>[-Math.atan2(x1-x0,y1-y0), Math.hypot(x1-x0,y1-y0)];
+// the bright lamp itself: a hot core and a wide halo
+function flare(c,x,y,r,rgb,a){ const g=c.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0,`rgba(255,255,255,${a})`); g.addColorStop(.12,`rgba(${rgb},${a*.6})`); g.addColorStop(.45,`rgba(${rgb},${a*.12})`); g.addColorStop(1,`rgba(${rgb},0)`); c.fillStyle=g; c.fillRect(x-r,y-r,r*2,r*2); }
+// where the light lands: a soft ellipse, brightest in the middle
+function pool(c,x,y,r,rgb,a,flat=.28){ c.save(); c.translate(x,y); c.scale(1,flat); const g=c.createRadialGradient(0,0,0,0,0,r); g.addColorStop(0,`rgba(${rgb},${a})`); g.addColorStop(.5,`rgba(${rgb},${a*.35})`); g.addColorStop(1,`rgba(${rgb},0)`); c.fillStyle=g; c.fillRect(-r,-r,r*2,r*2); c.restore(); }
+
 function floor(w,h,hy){ const F=h-hy; return {hy,F,X:(x,z)=>w/2+x*F/z, Y:(z,y=0)=>hy+F*(1-y)/z}; }
 
 const SCENES = {
@@ -617,13 +640,14 @@ const SCENES = {
     c.strokeStyle='rgba(20,18,20,.9)'; c.lineWidth=3; c.beginPath(); c.moveTo(lx,f.Y(3.2)); c.lineTo(lx,ly); c.quadraticCurveTo(lx,ly-16,lx-18,ly-16); c.stroke();
     const px=f.X(2.2,3.2), py=f.Y(3.2);
     g=c.createRadialGradient(px,py,0,px,py,w*.25); g.addColorStop(0,hexA('#ffe2a8',.16*fl)); g.addColorStop(1,'rgba(0,0,0,0)'); c.save(); c.translate(px,py); c.scale(1,.32); c.translate(-px,-py); c.fillStyle=g; c.fillRect(px-w*.25,py-w*.25,w*.5,w*.5); c.restore();
-    c.fillStyle=hexA('#ffe2a8',.045*fl); c.beginPath(); c.moveTo(lx-24,ly-12); c.lineTo(lx-12,ly-12); c.lineTo(px+w*.12,py); c.lineTo(px-w*.14,py); c.fill();
+    { const [ang,len]=aimAt(lx-18,ly-12,px,py); c.globalCompositeOperation='lighter'; softBeam(c,lx-18,ly-12,ang,len*1.04,3,w*.13,'255,226,168',.32*fl); flare(c,lx-18,ly-10,h*.05,'255,226,168',.5*fl); c.globalCompositeOperation='source-over'; }
     g=c.createRadialGradient(lx-18,ly-12,0,lx-18,ly-12,h*.3); g.addColorStop(0,hexA('#ffe2a8',.3*fl)); g.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=g; c.fillRect(0,0,w,h*.7);
     if(!S.fog){ const r=rnd(6); S.fog=[...Array(12)].map(()=>[r(),.55+r()*.45,.1+r()*.2,.3+r()]); }
     S.fog.forEach(([x,y,rr,s])=>{ const X=((x+t*.008*s)%1.4-.2)*w, Y=y*h, R=rr*w; c.save(); c.translate(X,Y); c.scale(1,.3); const fg=c.createRadialGradient(0,0,0,0,0,R); fg.addColorStop(0,'rgba(200,200,210,.07)'); fg.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=fg; c.fillRect(-R,-R,R*2,R*2); c.restore(); });
     const cyc=(t%12)/12; if(cyc<.3){ const q=cyc/.3, x=(-1.5+q*3)*w, y=f.Y(5);
       [0,40].forEach(o=>{ const hg=c.createRadialGradient(x-o,y,0,x-o,y,70); hg.addColorStop(0,'rgba(255,244,214,.3)'); hg.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=hg; c.fillRect(x-o-70,y-70,140,140); });
-      const bm=c.createLinearGradient(x,0,x+w*.4,0); bm.addColorStop(0,'rgba(255,244,214,.08)'); bm.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=bm; c.beginPath(); c.moveTo(x,y-6); c.lineTo(x+w*.4,y-40); c.lineTo(x+w*.4,y+40); c.lineTo(x,y+6); c.fill(); }
+      c.globalCompositeOperation='lighter'; [0,40].forEach(o=>softBeam(c,x-o,y,-Math.PI/2,w*.45,4,46,'255,244,214',.22)); c.globalCompositeOperation='source-over';
+      pool(c,x+w*.18,y+10,w*.16,'255,244,214',.06,.2); }
     const web=(ox,oy,dir)=>{ const L=Math.min(w,h)*.34, sw=Math.sin(t*.6)*.025; c.strokeStyle='rgba(255,255,255,.09)'; c.lineWidth=1;
       const n=7, angs=[...Array(n)].map((_,i)=>(i/(n-1))*Math.PI/2+sw*(i/(n-1)));
       c.beginPath(); angs.forEach(a=>{ c.moveTo(ox,oy); c.lineTo(ox+dir*Math.cos(a)*L,oy+Math.sin(a)*L); }); c.stroke();
@@ -668,12 +692,11 @@ const SCENES = {
     if(!S.seams){ const r=rnd(4); S.seams=[]; for(let x=-8;x<8;x+=.45){ for(let z=1+r()*2;z<30;z+=2+r()*4) S.seams.push([x,z]); } }
     c.beginPath(); S.seams.forEach(([x,z])=>{ c.moveTo(f.X(x,z),f.Y(z)); c.lineTo(f.X(x+.45,z),f.Y(z)); }); c.stroke();
     c.strokeStyle='rgba(150,170,230,.18)'; c.beginPath(); c.moveTo(0,hy); c.lineTo(w,hy); c.stroke();
-    const beams=[0,1,2].map(i=>({x:w*(.2+.3*i),a:Math.sin(t*.22+i*2)*.4}));
-    beams.forEach(b=>{
-      c.save(); c.translate(b.x,-20); c.rotate(b.a); const bg=c.createLinearGradient(0,0,0,h); bg.addColorStop(0,hexA(BL,.16)); bg.addColorStop(1,hexA(BL,.02));
-      c.fillStyle=bg; c.beginPath(); c.moveTo(-8,0); c.lineTo(8,0); c.lineTo(w*.12,h); c.lineTo(-w*.12,h); c.fill(); c.restore();
-      const py=h*.86, px=b.x-Math.sin(b.a)*(py+20)/Math.cos(b.a);
-      c.save(); c.translate(px,py); c.scale(1,.25); const pg=c.createRadialGradient(0,0,0,0,0,w*.16); pg.addColorStop(0,'rgba(190,210,255,.2)'); pg.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=pg; c.fillRect(-w*.16,-w*.16,w*.32,w*.32); c.restore(); });
+    const beams=[0,1,2].map(i=>({x:w*(.2+.3*i),a:Math.sin(t*.12+i*2.1)*.18}));
+    c.globalCompositeOperation='lighter';
+    beams.forEach(b=>{ softBeam(c,b.x,-20,b.a,h*1.1,12,w*.13,'90,130,255',.8);
+      const py=h*.86, px=b.x-Math.tan(b.a)*(py+20); pool(c,px,py,w*.15,'190,210,255',.18,.25); flare(c,b.x,-4,Math.min(w,h)*.06,'150,175,255',.45); });
+    c.globalCompositeOperation='source-over';
     if(!S.d){ const r=rnd(8); S.d=[...Array(90)].map(()=>[r(),r(),.4+r()]); }
     S.d.forEach(([x,y,s])=>{ const X=((x+Math.sin(t*.1*s+y*9)*.01)%1)*w, Y=((y-t*.004*s)%1+1)%1*h;
       let inB=0; beams.forEach(b=>{ const dy=Y+20, dx=X-b.x, ax=dx*Math.cos(-b.a)-dy*Math.sin(-b.a), ay=dx*Math.sin(-b.a)+dy*Math.cos(-b.a); if(ay>0&&Math.abs(ax)<w*.12*ay/h+8) inB=1; });
@@ -737,7 +760,7 @@ const SCENES = {
     S.lamps.forEach((lx,i)=>{ const ly=street-h*.32, f=.9+.1*Math.sin(t*3+i*4);
       c.strokeStyle='rgba(30,26,30,.95)'; c.lineWidth=3; c.beginPath(); c.moveTo(lx,street); c.lineTo(lx,ly); c.quadraticCurveTo(lx,ly-14,lx+16,ly-14); c.stroke();
       const g=c.createRadialGradient(lx+16,ly-10,0,lx+16,ly-10,h*.12); g.addColorStop(0,hexA('#ffb35c',.45*f)); g.addColorStop(.2,hexA('#ff9a3a',.15*f)); g.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=g; c.fillRect(lx+16-h*.12,ly-10-h*.12,h*.24,h*.24);
-      const cone=c.createLinearGradient(0,ly,0,street); cone.addColorStop(0,hexA('#ffb35c',.07*f)); cone.addColorStop(1,'rgba(255,154,58,0)'); c.fillStyle=cone; c.beginPath(); c.moveTo(lx+12,ly-8); c.lineTo(lx+20,ly-8); c.lineTo(lx+16+h*.09,street); c.lineTo(lx+16-h*.09,street); c.fill();
+      c.globalCompositeOperation='lighter'; softBeam(c,lx+16,ly-8,0,street-ly+8,3,h*.11,'255,179,92',.3*f); c.globalCompositeOperation='source-over'; pool(c,lx+16,street,h*.13,'255,179,92',.12*f,.22);
       const rf=c.createLinearGradient(0,street,0,h); rf.addColorStop(0,hexA('#ffb35c',.3*f)); rf.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=rf;
       for(let q=0;q<6;q++){ const yy=street+q*(h-street)/6; c.fillRect(lx+16-5+Math.sin(t*1.7+q*1.3)*3,yy,10,(h-street)/9); } });
     c.fillStyle='rgba(255,255,255,.04)'; c.fillRect(0,street,w,1);
@@ -833,12 +856,24 @@ const photoEl = k => { const p=PHOTO[k]; return `<div class="pl" data-k="${k}" s
 /* over the photo, the stage keeps only its sweeping beams and the dust in them */
 const LITE = {
   stage(c,t,w,h,k,S){
-    const beams=[0,1,2].map(i=>({x:w*(.2+.3*i),a:Math.sin(t*.22+i*2)*.4}));
-    beams.forEach(b=>{ c.save(); c.translate(b.x,-20); c.rotate(b.a); const bg=c.createLinearGradient(0,0,0,h); bg.addColorStop(0,'rgba(140,170,255,.18)'); bg.addColorStop(1,'rgba(140,170,255,.02)'); c.fillStyle=bg; c.beginPath(); c.moveTo(-8,0); c.lineTo(8,0); c.lineTo(w*.12,h); c.lineTo(-w*.12,h); c.fill(); c.restore(); });
-    if(!S.d){ const r=rnd(8); S.d=[...Array(80)].map(()=>[r(),r(),.4+r()]); }
-    S.d.forEach(([x,y,s])=>{ const X=((x+Math.sin(t*.1*s+y*9)*.01)%1)*w, Y=((y-t*.004*s)%1+1)%1*h; c.fillStyle=hexA('#cfdcff',.12*s); c.beginPath(); c.arc(X,Y,1,0,7); c.fill(); });
+    // haze hanging under the rig, so the beams have something to light
+    const hz=c.createLinearGradient(0,0,0,h*.55); hz.addColorStop(0,'rgba(150,175,255,.06)'); hz.addColorStop(1,'rgba(150,175,255,0)'); c.fillStyle=hz; c.fillRect(0,0,w,h*.55);
+    const beams=[0,1,2].map(i=>({x:w*(.2+.3*i),a:Math.sin(t*.12+i*2.1)*.18}));   // slow, narrow sweeps, like real moving heads
+    c.globalCompositeOperation='lighter';
+    beams.forEach((b,i)=>{ const br=.92+.08*Math.sin(t*.7+i*3);   // a faint breathing, as haze drifts through
+      softBeam(c,b.x,-30,b.a,h*1.15,12,w*.15,'150,175,255',.9*br);
+      const py=h*.9, px=b.x-Math.tan(b.a)*(py+30); pool(c,px,py,w*.14,'175,195,255',.16*br);
+      flare(c,b.x,-4,Math.min(w,h)*.07,'190,205,255',.55); });
+    c.globalCompositeOperation='source-over';
+    if(!S.d){ const r=rnd(8); S.d=[...Array(110)].map(()=>[r(),r(),.4+r()]); }
+    S.d.forEach(([x,y,s2])=>{ const X=((x+Math.sin(t*.1*s2+y*9)*.012)%1+1)%1*w, Y=((y-t*.004*s2)%1+1)%1*h;
+      let lit=0; beams.forEach(b=>{ const dy=Y+30, dx=X-b.x, ax=dx*Math.cos(b.a)+dy*Math.sin(b.a), ay=-dx*Math.sin(b.a)+dy*Math.cos(b.a);
+        if(ay>0) lit=Math.max(lit,1-Math.abs(ax)/(w*.15*ay/(h*1.15)+12)); });
+      if(lit<=0) return;   // dust is only visible where the light catches it
+      c.fillStyle=hexA('#dfe8ff',.5*lit*s2); c.beginPath(); c.arc(X,Y,.6+.7*s2,0,7); c.fill(); });
   }
 };
+
 const TOUCH=matchMedia('(hover:none)').matches;
 const LENS=(()=>{ try{ const t=document.createElement('canvas').getContext('2d'); return 'filter' in t; }catch(e){ return false; } })();
 class Viz{
