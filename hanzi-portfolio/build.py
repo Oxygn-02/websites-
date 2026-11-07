@@ -67,9 +67,17 @@ for key, fn in ORDER:
     im.save(buf, 'JPEG', quality=88, optimize=True)
     imgs[key] = 'data:image/jpeg;base64,' + base64.b64encode(buf.getvalue()).decode()
 
+# Unsplash photo plates, downloaded to assets/plates/<key>.jpg; embedded so they work offline and in sandboxed previews
+plates = {}
+PD = os.path.join(HERE, 'assets', 'plates')
+for key, _ in ORDER:
+    fp = os.path.join(PD, key + '.jpg')
+    if os.path.exists(fp):
+        plates[key] = 'data:image/jpeg;base64,' + base64.b64encode(open(fp, 'rb').read()).decode()
+
 SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "src", "template.html")
 OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, "dist", "hanzi-designs-mockup.html")
 tpl = open(SRC).read()
-out = tpl.replace('__IMG__', json.dumps(imgs)).replace('__PAL__', json.dumps(pals))
+out = tpl.replace('__IMG__', json.dumps(imgs)).replace('__PAL__', json.dumps(pals)).replace('__PLATES__', json.dumps(plates))
 open(OUT, "w").write(out)
 print('built', len(out) // 1024, 'KB')

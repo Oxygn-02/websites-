@@ -800,7 +800,7 @@ const SCENES = {
    ===================================================================== */
 const UNS='?ixlib=rb-4.1.0&q=72&fm=jpg&crop=entropy&cs=srgb&w=1800';
 const PLATE = {
-  alpha:   {u:'photo-1562850914-5e084ce7e8c1', g:'saturate(1.35) sepia(.3) contrast(1.1) brightness(.62) blur(8px)', tint:'#2c4bd6', to:0.28, o:0.58, by:'Mr Xerty', at:'xerty'},
+  alpha:   {u:'photo-1635425511304-8c97aabf14d5', g:'grayscale(1) contrast(1.1) brightness(.48) blur(13px)', tint:'#2c4bd6', to:0.35, o:0.55, by:'Ben Allan', at:'ballonandon'},
   badroute:{u:'photo-1490642914619-7955a3fd483c', g:'grayscale(.5) sepia(.25) hue-rotate(185deg) saturate(1.8) brightness(.5) blur(8px)', tint:'#2f5bff', to:0.35, o:0.48, by:'enrico bet', at:'henry_be'},
   target:  {u:'photo-1622318614813-8f27b0ae8ce3', g:'grayscale(1) contrast(1.35) brightness(.45) blur(8px)', tint:'#d11a2a', to:0.3, o:0.58, by:'Roman Denisenko', at:'romandempire'},
   smoke:   {u:'photo-1536405528985-0ab8ba47f25e', g:'grayscale(1) contrast(1.25) brightness(.85) blur(3px)', tint:'linear-gradient(100deg,#ff8a1f,#3d5bff 60%)', to:0.55, o:0.53, by:'Thomas Stephan', at:'thomasstephan'},
@@ -814,7 +814,8 @@ const PLATE = {
 const PLATE_OK = {};
 const plateState = {};   // k -> 'loading' | 'ok' | 'fail'; only the front and next piece are ever requested
 if(matchMedia('(prefers-reduced-motion:reduce)').matches) document.querySelectorAll('#flow animate').forEach(a=>a.remove());
-const plateUrl = k => `https://images.unsplash.com/${PLATE[k].u}${UNS}`;
+const PLATES = __PLATES__;   // embedded at build time from assets/plates/, so photos show without network access
+const plateUrl = k => PLATES[k] || `https://images.unsplash.com/${PLATE[k].u}${UNS}`;
 const plateEls = k => document.querySelectorAll(`.pl[data-k="${k}"]`);
 function applyPlate(k){   // idempotent: sets the photo on every plate element for k and fades it in once loaded
   const url=plateUrl(k);
