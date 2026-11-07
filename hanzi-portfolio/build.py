@@ -67,11 +67,10 @@ for key, fn in ORDER:
     im.save(buf, 'JPEG', quality=88, optimize=True)
     imgs[key] = 'data:image/jpeg;base64,' + base64.b64encode(buf.getvalue()).decode()
 
-# Unsplash photo plates, downloaded to assets/plates/<key>.jpg; embedded so they work offline and in sandboxed previews
+# photographed backdrops (only Power has one): assets/plates/<key>.jpg, embedded as data URIs
 plates = {}
-PD = os.path.join(HERE, 'assets', 'plates')
 for key, _ in ORDER:
-    fp = os.path.join(PD, key + '.jpg')
+    fp = os.path.join(HERE, 'assets', 'plates', key + '.jpg')
     if os.path.exists(fp):
         plates[key] = 'data:image/jpeg;base64,' + base64.b64encode(open(fp, 'rb').read()).decode()
 
