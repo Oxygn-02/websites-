@@ -22,7 +22,8 @@ open dist/hanzi-designs-mockup.html
 | `src/template.html` | The whole site: CSS, markup and JS, about 1,100 lines |
 | `build.py` | Embeds the art and palettes |
 | `assets/art/*.png` | The 10 original artworks, named by key |
-| `dist/hanzi-designs-mockup.html` | Latest build (v19) |
+| `dist/hanzi-designs-mockup.html` | Latest build (v22) |
+| `archive/v21-cover-reel.html` | v21: drawn scenes, intro cover reel, client list |
 | `archive/v20-embedded-plates.html` | v20: all ten photo plates embedded (replaced in v21 by drawn scenes, Power keeps its photo) |
 | `archive/v18-photo-plates.html` | v18: photo plates, before the v19 changes |
 | `archive/v16-drawn-scenes.html` | Last version before photo plates and the lens pass |

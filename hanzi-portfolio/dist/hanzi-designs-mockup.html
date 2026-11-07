@@ -32,13 +32,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .pillnav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;display:flex;gap:2px;padding:5px;border-radius:999px;
   background:rgba(18,18,22,.42);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);
-  box-shadow:0 10px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25);transition:opacity .4s}
+  box-shadow:0 10px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25);transition:opacity .4s,transform .45s cubic-bezier(.2,.8,.2,1)}
+body.navhide .pillnav:not(:focus-within){transform:translate(-50%,-150%);opacity:0;pointer-events:none}
 .pillnav a{padding:8px 17px;border-radius:999px;font-weight:600;font-size:15px;color:#fff;text-decoration:none;transition:background .25s}
 .pillnav a:hover{background:rgba(255,255,255,.2)}
 body.lock .pillnav{opacity:0;pointer-events:none}
 
 /* ================= 1 · INTRO ================= */
-.hero{position:relative;min-height:92svh;display:grid;place-content:center;justify-items:center;gap:20px;overflow:hidden;padding:60px 5vw 140px}
+.hero{position:relative;min-height:92svh;display:grid;place-content:center;justify-items:center;gap:20px;overflow:hidden;padding:60px 5vw 175px}
 .orb{position:absolute;border-radius:50%;filter:blur(70px);animation:float 30s ease-in-out infinite alternate}
 .hero.still .orb{animation-play-state:paused}
 .o-a{width:48vmax;height:48vmax;left:-16vmax;top:-10vmax;background:radial-gradient(circle,rgba(255,138,31,.95),transparent 68%)}
@@ -65,10 +66,10 @@ body.lock .pillnav{opacity:0;pointer-events:none}
 .reel{position:absolute;left:0;right:0;bottom:34px;z-index:2;overflow:hidden;opacity:0;transition:opacity 1.2s ease 1.6s;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
 .hero.ready .reel{opacity:1}
-.reel-track{display:flex;gap:18px;width:max-content;padding:10px 0;animation:reel 70s linear infinite}
+.reel-track{display:flex;gap:38px;width:max-content;padding:10px 0;animation:reel 70s linear infinite}
 .reel:hover .reel-track,.reel:focus-within .reel-track{animation-play-state:paused}
 @keyframes reel{to{transform:translateX(-50%)}}
-.reel button{flex:none;height:96px;aspect-ratio:4/5;padding:5px;border-radius:14px;
+.reel button{flex:none;height:118px;aspect-ratio:4/5;padding:5px;border-radius:14px;
   background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);
   box-shadow:0 10px 26px rgba(0,0,0,.35);opacity:.6;transition:opacity .4s,transform .4s cubic-bezier(.2,.8,.2,1)}
 .reel button:hover,.reel button:focus-visible{opacity:1;transform:translateY(-6px) scale(1.06)}
@@ -101,7 +102,9 @@ canvas.viz{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .fr .box{position:relative;height:clamp(280px,60vh,680px);aspect-ratio:4/5;border-radius:13px;overflow:hidden;display:grid;place-items:center;padding:4.5%;
   background:radial-gradient(120% 90% at 50% 40%,color-mix(in srgb,var(--ac) 16%,#16161a),#08080a);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
 .fr .box.fill{padding:0}
-.fr img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;border-radius:3px;box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.1);-webkit-user-drag:none;pointer-events:none}
+.fr .box::before{content:'';position:absolute;inset:-25%;background:var(--art) center/cover;filter:blur(30px) saturate(1.3) brightness(.36);opacity:.95}
+.fr .box.fill::before{display:none}
+.fr img{position:relative;z-index:1;display:block;max-width:100%;max-height:100%;width:auto;height:auto;border-radius:3px;box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.1);-webkit-user-drag:none;pointer-events:none}
 .fr .box.fill img{width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none}
 .card:not(.on) .fr{transform:scale(.8)}
 .card.on .fr{transform:translateZ(60px);border-color:color-mix(in srgb,var(--ac) 45%,rgba(255,255,255,.4))}
@@ -866,9 +869,12 @@ const fontWeight = f => /Playfair/.test(f)?900 : /Archivo/.test(f)?400 : /Barlow
       // ink width of this letter in every font; drop the extra-wide ones so the letters can sit close
       const ws=M.map(o=>{ cv.font=`${o.w} ${100*o.sc}px ${o.f}`; const m=cv.measureText(ch); return ((m.actualBoundingBoxRight||0)+(m.actualBoundingBoxLeft||0)||m.width)/100; });
       const med=[...ws].sort((a,b)=>a-b)[Math.floor(ws.length/2)];
-      allowed[i]=ws.map((w,j)=>w<=med*1.12?j:-1).filter(j=>j>=0);
+      // keep fonts within a narrow width band around the median; if too few qualify, take the closest four
+      let band=ws.map((w,j)=>w>=med*.88&&w<=med*1.08?j:-1).filter(j=>j>=0);
+      if(band.length<4) band=ws.map((w,j)=>[Math.abs(w-med),j]).sort((a,b)=>a[0]-b[0]).slice(0,4).map(x=>x[1]);
+      allowed[i]=band;
       const max=Math.max(...allowed[i].map(j=>ws[j]));
-      slots[i].style.width=(max+0.05)+'em';
+      slots[i].style.width=(max+0.015)+'em';
     });
     letters.forEach((_,i)=>{ if(idx[i]==null) idx[i]=allowed[i].includes(0)?0:allowed[i][0]; else if(!allowed[i].includes(idx[i])) idx[i]=pickFont(i); show(i,false); });
   }
@@ -907,10 +913,13 @@ const ring=$('#ring'), stage=$('#stage'), gbs=$('#gbs'), cap=$('#cap'), galSec=$
 const N=ORDER.length, STEP=360/N;
 let R=840, rot=0, active=0;
 gbs.innerHTML = ORDER.map(k=>`<div class="gb" style="background-image:url(${IMG[k]});--br:${P[k].br}"></div>`).join('');
-ring.innerHTML = ORDER.map((k,i)=>`<div class="card" data-i="${i}" style="--ac:${P[k].th.ac}"><span class="ct pill" aria-hidden="true">${P[k].c}</span><div class="fr"><div class="box"><img src="${IMG[k]}" alt="${P[k].t}"></div></div></div>`).join('');
+ring.innerHTML = ORDER.map((k,i)=>`<div class="card" data-i="${i}" style="--ac:${P[k].th.ac}"><span class="ct pill" aria-hidden="true">${P[k].c}</span><div class="fr"><div class="box" style="--art:url(${IMG[k]})"><img src="${IMG[k]}" alt="${P[k].t}"></div></div></div>`).join('');
 // pieces close to the frame's 4:5 shape fill it; others sit matted like a print
 [...ring.querySelectorAll('.box img')].forEach(im=>{ const f=()=>{ const ar=im.naturalWidth/im.naturalHeight; im.parentNode.classList.toggle('fill', ar>.7&&ar<.95); }; im.complete?f():im.addEventListener('load',f); });
 const cards=[...ring.children], gbl=[...gbs.children];
+// the nav gets out of the way of the art on the way down and comes back on the way up
+let lastY=scrollY; addEventListener('scroll',()=>{ const y=scrollY, d=y-lastY; if(Math.abs(d)<6) return;
+  document.body.classList.toggle('navhide', d>0 && y>120); lastY=y; },{passive:true});
 $('#pls').innerHTML=ORDER.filter(hasPhoto).map(photoEl).join(''); const pll=[...$('#pls').children];
 // intro reel: every piece twice, so the loop is seamless; clicking one opens it
 $('#reelTrack').innerHTML=[...ORDER,...ORDER].map((k,i)=>`<button type="button" data-k="${k}" ${i>=N?'tabindex="-1" aria-hidden="true"':''} aria-label="Open ${P[k].t}"><img src="${IMG[k]}" alt=""></button>`).join('');
