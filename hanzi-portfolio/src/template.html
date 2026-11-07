@@ -64,11 +64,11 @@ body.lock .pillnav{opacity:0;pointer-events:none}
 .hero.ready p.role{opacity:.6}
 /* the work, on the first screen: a slow row of covers drifting along the bottom */
 .reel{position:absolute;left:0;right:0;bottom:34px;z-index:2;overflow:hidden;opacity:0;transition:opacity 1.2s ease 1.6s;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
 .hero.ready .reel{opacity:1}
-.reel-track{display:flex;gap:38px;width:max-content;padding:10px 0;animation:reel 70s linear infinite}
+.reel-track{display:flex;gap:38px;width:max-content;padding:10px 0;animation:reel var(--dur,70s) linear infinite}
 .reel:hover .reel-track,.reel:focus-within .reel-track{animation-play-state:paused}
-@keyframes reel{to{transform:translateX(-50%)}}
+@keyframes reel{to{transform:translateX(calc(-1 * var(--set,50%)))}}
 .reel button{flex:none;height:118px;aspect-ratio:4/5;padding:5px;border-radius:14px;
   background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);
   box-shadow:0 10px 26px rgba(0,0,0,.35);opacity:.6;transition:opacity .4s,transform .4s cubic-bezier(.2,.8,.2,1)}
@@ -134,6 +134,12 @@ canvas.viz{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
   background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.22)}
 .real{margin:46px auto 0;padding-top:36px;border-top:1px solid rgba(255,255,255,.2);display:grid;justify-items:center;gap:14px;max-width:34ch}
 .real h3{font-size:clamp(26px,3vw,38px);font-weight:700;line-height:1}
+.cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:6px}
+.copy{margin-top:4px;padding:9px 18px;border-radius:999px;font-size:15px;color:rgba(255,255,255,.8);
+  background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.2);transition:background .3s,color .3s}
+.copy:hover{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));color:#fff}
+.copy.done{color:#fff}
+.real .copy span{font-size:inherit;opacity:1}
 .real span{font-size:17px;opacity:.8}
 footer{margin-top:5vh;font-size:13px;opacity:.55}
 
@@ -156,6 +162,8 @@ footer{margin-top:5vh;font-size:13px;opacity:.55}
 #piece.shown .pp-text>*:nth-child(4){transition-delay:.24s}#piece.shown .pp-text>*:nth-child(5){transition-delay:.32s}
 #piece.shown .pp-text>*:nth-child(6){transition-delay:.4s}#piece.shown .pp-text>*:nth-child(7){transition-delay:.48s}
 .pp-text h2{font-family:var(--fd);font-weight:400;font-size:clamp(36px,4.2vw,66px);line-height:.95;margin:16px 0 8px;text-transform:uppercase}
+.pp-text .ask-note{margin-top:14px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.55}
+.pp-text.ask .vision,.pp-text.ask li{font-style:italic;opacity:.75}
 .pp-text .sub{opacity:.72;font-size:16px}
 .pp-text h4{margin:26px 0 8px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.75;font-weight:600}
 .pp-text .vision{font-size:clamp(18px,1.6vw,22px);line-height:1.5;max-width:44ch}
@@ -194,6 +202,10 @@ footer{margin-top:5vh;font-size:13px;opacity:.55}
   .pp-text .vision,.pp-text ul{margin-left:auto;margin-right:auto}
   .pp-text ul{text-align:left}
   .sw{justify-content:center}
+  .hero{min-height:0;padding:96px 0 48px;gap:16px}
+  .hero .enter{margin-top:14px}
+  .reel{position:relative;bottom:auto;width:100vw;margin-top:22px}
+  .reel button{height:104px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}}
 </style>
@@ -234,7 +246,8 @@ footer{margin-top:5vh;font-size:13px;opacity:.55}
   <div class="real">
     <h3>Let's make it real.</h3>
     <span>Got an idea? Tell me about it and let's build something people notice.</span>
-    <a class="gbtn" href="mailto:hello@example.com">Start a project</a>
+    <div class="cta"><a class="gbtn" id="mailBtn" href="#">Start a project</a><a class="gbtn" id="igBtn" href="#" target="_blank" rel="noopener"></a></div>
+    <button class="copy" id="copyMail" type="button"><span id="mailTxt"></span> · <span id="copyLbl">Copy</span></button>
   </div>
   <footer>Concept redesign mockup, unofficial and for presentation only. Contact details and project write-ups are placeholders. Bad Route, Lacoste × LV, The City Is Your Track and Rush Hour are concept work in brand styles, not commissions. Stage photograph behind Power by Camille Roux on Unsplash.</footer>
 </section>
@@ -262,71 +275,83 @@ const PAL = __PAL__;   // colours pulled from each cover at build time
 
 /* ---- one config block per site: swap SITE and P for the next artist ---- */
 const SITE = {
-  name:'Hanzi', tagline:'Your vision. My creativity.'
+  name:'Hanzi', tagline:'Your vision. My creativity.',
+  email:'hello@example.com', instagram:'hanzi_designs',   // contact details: placeholders until confirmed
+  prompts:true   // piece write-ups are prompts for Hanzi to answer in her own words
 };
 $('#idTag').textContent = SITE.tagline;
+$('#mailBtn').href='mailto:'+SITE.email; $('#mailTxt').textContent=SITE.email;
+$('#igBtn').href=`https://www.instagram.com/${SITE.instagram}/`; $('#igBtn').textContent='@'+SITE.instagram;
+$('#copyMail').addEventListener('click',async()=>{
+  let ok=false;
+  try{ await navigator.clipboard.writeText(SITE.email); ok=true; }catch(e){
+    const ta=document.createElement('textarea'); ta.value=SITE.email; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
+    try{ ok=document.execCommand('copy'); }catch(e2){} ta.remove(); }
+  const b=$('#copyMail'), l=$('#copyLbl'); l.textContent=ok?'Copied':'Select to copy'; b.classList.toggle('done',ok);
+  clearTimeout(b._t); b._t=setTimeout(()=>{ l.textContent='Copy'; b.classList.remove('done'); },1800);
+});
 
 /* c = category, t = title, s = subtitle, v = creative vision, dc = design choices, viz = background scene */
 const P = {
   alpha:{c:'Music', t:'Alpha House', s:'Knucks × Venna, cover art', viz:'sun',
-    v:"Alpha House is about where you come from and who you come up with. I wanted the title to become the house itself, so the name and the place are the same thing.",
-    dc:["Stacked, condensed black letters form the walls and the roof. The type is the illustration.",
-        "A sunset gradient runs from hot orange to midnight blue, warm at the centre and cooling at the edges.",
-        "Everything else stays out of the way: two names at the base and the advisory label, nothing more."],
+    v:"What does Alpha House mean to you? Tell the story of the brief, and how the title became the house itself.",
+    dc:["Why build the house out of the letters?",
+        "Why the hot orange to midnight blue?",
+        "What did you deliberately leave off the cover?"],
     th:{ink:'#fff4e6',ac:'#ff8a1f',fd:"'Anton','Impact',sans-serif"}, br:.55},
   badroute:{c:'Music', t:'Bad Route', s:'Single art', viz:'dial',
-    v:"Bad Route plays on taking the wrong road to get to the nice things. The watch and the map sit on top of each other, so the route and the reward can't be separated.",
-    dc:["A Submariner dial, rebuilt in deep blue, is the centrepiece. The clock is literally ticking.",
-        "An old London street map is printed into the dial's blue, so it reads as texture first and map second.",
-        "The title sits small in gold in the corner, closer to an engraving than a headline."],
+    v:"What is the “bad route” to the nice things, and why put a watch and a map together?",
+    dc:["Why rebuild the dial in deep blue?",
+        "Why hide a London map inside it?",
+        "Why keep the title small, like an engraving?"],
     th:{ink:'#f2e3b4',ac:'#f2d27a',fd:"'Bebas Neue','Impact',sans-serif"}, br:.5},
   target:{c:'Music', t:'Untitled (Crosshair)', s:'Cover art', viz:'radar',
-    v:"No title and no face. The cover is about being watched, and being a target, without saying it out loud.",
-    dc:["The figure is lit from behind, so you only get the outline, never the expression.",
-        "One red crosshair sits between the shoulders. It's the only colour in the frame.",
-        "Heavy black and soft grain keep it quiet, so the red does all the talking."],
+    v:"Why no title and no face? What is the cover saying without saying it?",
+    dc:["Why light the figure only from behind?",
+        "Why one red crosshair and nothing else?",
+        "How did you keep it this quiet?"],
     th:{ink:'#ececec',ac:'#d11a2a',fd:"'Oswald','Impact',sans-serif"}, br:.5},
   smoke:{c:'Event Flyers', t:'Smoke and Paint', s:'Event flyer, 22+', viz:'smoke',
-    v:"Smoke and Paint is a creative night, so the flyer had to feel like the room: hazy, warm and a little loose.",
-    dc:["A blue duotone photo with a hot orange glow behind it, the same contrast as stage lights through smoke.",
-        "Bold block type for the name, broken up by a hand-written “and paint” so it never feels corporate.",
-        "Grain over everything, with the details stacked plainly in the corners so the image can breathe."],
+    v:"What is the night like, and how did you make the flyer feel like the room?",
+    dc:["Why the blue duotone against hot orange?",
+        "Why hand-write “and paint”?",
+        "How did you decide where the details sit?"],
     th:{ink:'#ffffff',ac:'#ff9a2e',fd:"'Archivo Black',sans-serif"}, br:.55},
   menace:{c:'Event Flyers', t:"Don't Be A Menace", s:'Event flyer, 22+', viz:'road',
-    v:"Don't Be A Menace After Midnight sets the tone before you read a single detail: a quiet street, one lamp on, something about to happen.",
-    dc:["The type is painted onto the road in perspective, like markings on the crossing.",
-        "Cobwebs drape over the top of the frame for that late-night, slightly eerie feeling.",
-        "An almost colourless palette with one red line, so “After Midnight” glows."],
+    v:"What should people feel before they read a single detail?",
+    dc:["Why paint the type onto the road?",
+        "Why the cobwebs?",
+        "Why keep it almost colourless, with one red line?"],
     th:{ink:'#ece4de',ac:'#e0302f',fd:"'Unbounded',sans-serif"}, br:.45},
   lacoste:{c:'Logos', t:'Lacoste × Louis Vuitton', s:'Logo mashup', viz:'monogram',
-    v:"What if two houses that never meet shared one mark? The crocodile belongs to one, the monogram to the other. Together they feel like a collab that could exist.",
-    dc:["The crocodile's silhouette is kept exact, so it's recognisable at a glance.",
-        "It's filled with monogram pattern instead of a flat colour.",
-        "Two colourways side by side show it working as a system, not a one-off."],
+    v:"What if two houses shared one mark? Where did this idea start?",
+    dc:["How did you keep the crocodile recognisable?",
+        "Why fill it with monogram pattern?",
+        "Why show two colourways side by side?"],
     th:{ink:'#f3ece2',ac:'#c79a68',fd:"'Playfair Display',serif"}, br:.6},
   power:{c:'Logos', t:'Power', s:'Wordmark', viz:'stage',
-    v:"Power is a drama, so the wordmark carries the theatre inside it.",
-    dc:["Comedy and tragedy masks are tucked into the letterforms, there if you look for them.",
-        "A heavy, wide typeface that feels solid and in control.",
-        "Tested in black and in blue to prove it holds up on any background."],
+    v:"What is Power about, and how does the wordmark carry it?",
+    dc:["Why hide the masks inside the letters?",
+        "Why such a heavy, wide typeface?",
+        "Why test it in black and in blue?"],
     th:{ink:'#ffffff',ac:'#3a6bff',fd:"'Archivo Black',sans-serif"}, br:.55},
   gabos:{c:'Marketing Campaigns', t:'Gabos London', s:'Campaign poster', viz:'street',
-    v:"Gabos London is a streetwear brand rooted in the city, so the campaign needed to feel like real people, not models.",
-    dc:["Street-cast and shot at the door, so the clothes look lived in.",
-        "“Born in London. Worn everywhere.” does the positioning in five words.",
-        "Navy with a single hit of orange keeps it tight and on-brand."],
+    v:"Who is Gabos London for, and what did the campaign need to feel like?",
+    dc:["Why street-cast instead of models?",
+        "How did you land on “Born in London. Worn everywhere.”?",
+        "Why navy with one hit of orange?"],
     th:{ink:'#ffffff',ac:'#ff6a1a',fd:"'Barlow Condensed','Arial Narrow',sans-serif"}, br:.5},
   nike:{c:'Marketing Campaigns', t:'The City Is Your Track', s:'Campaign poster', viz:'bridge',
-    v:"The City Is Your Track turns the commute into a race course. London isn't the backdrop, it's the track.",
-    dc:["A runner mid-stride on Tower Bridge, the most recognisable crossing in the city.",
-        "Low, wide framing makes the bridge feel like a stadium.",
-        "Dark tones with a red accent for energy, and a short, punchy headline."],
+    v:"How does a commute become a race? Tell the idea behind the campaign.",
+    dc:["Why Tower Bridge?",
+        "Why the low, wide framing?",
+        "Why dark tones with a red accent?"],
     th:{ink:'#ffffff',ac:'#e3173e',fd:"'Archivo Black',sans-serif"}, br:.5},
   tfl:{c:'Marketing Campaigns', t:'Rush Hour', s:'Campaign poster', viz:'tube',
-    v:"Rush Hour turns the stress of running late into something everyone shares. Look at the crowd: everyone's in the same rush.",
-    dc:["A black-and-white crowd with one face picked out in blue, so you find yourself in it.",
-        "The headline is reassuring rather than a telling-off: you're not late, you're just in rush hour.",
-        "The roundel and a plain sans-serif keep it reading like a real transport poster."],
+    v:"What is the feeling of rush hour you wanted to flip?",
+    dc:["Why pick out one face in blue?",
+        "Why a reassuring headline instead of a telling-off?",
+        "How did you make it read like a real transport poster?"],
     th:{ink:'#ffffff',ac:'#dc241f',fd:"'Inter',sans-serif"}, br:.5}
 };
 /* credits under each piece: fill in with the artist (TBC = to confirm) */
@@ -922,7 +947,16 @@ let lastY=scrollY; addEventListener('scroll',()=>{ const y=scrollY, d=y-lastY; i
   document.body.classList.toggle('navhide', d>0 && y>120); lastY=y; },{passive:true});
 $('#pls').innerHTML=ORDER.filter(hasPhoto).map(photoEl).join(''); const pll=[...$('#pls').children];
 // intro reel: every piece twice, so the loop is seamless; clicking one opens it
-$('#reelTrack').innerHTML=[...ORDER,...ORDER].map((k,i)=>`<button type="button" data-k="${k}" ${i>=N?'tabindex="-1" aria-hidden="true"':''} aria-label="Open ${P[k].t}"><img src="${IMG[k]}" alt=""></button>`).join('');
+const reelBtn=(k,copy)=>`<button type="button" data-k="${k}" ${copy?'tabindex="-1" aria-hidden="true"':''} aria-label="Open ${P[k].t}"><img src="${IMG[k]}" alt=""></button>`;
+function buildReel(){   // one full set is measured, then repeated until it covers the screen plus one set to scroll into
+  const t=$('#reelTrack'); t.innerHTML=ORDER.map(k=>reelBtn(k,false)).join('');
+  const gap=parseFloat(getComputedStyle(t).columnGap)||0, set=t.scrollWidth+gap;
+  const copies=Math.max(2,Math.ceil(innerWidth/set)+1);
+  t.innerHTML=Array.from({length:copies},(_,c)=>ORDER.map(k=>reelBtn(k,c>0)).join('')).join('');
+  t.style.setProperty('--set',set+'px'); t.style.setProperty('--dur',(set/20).toFixed(1)+'s');   // a steady 20px a second
+}
+buildReel();
+let reelT; addEventListener('resize',()=>{ clearTimeout(reelT); reelT=setTimeout(buildReel,200); });
 $('#reelTrack').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; goTo(ORDER.indexOf(b.dataset.k)); openPiece(b.dataset.k,b.querySelector('img')); });
 // about: real clients only, no TBC or self-initiated work
 $('#clients').innerHTML=[...new Set(Object.values(CREDIT))].filter(v=>v&&v!=='TBC'&&!/self-initiated/i.test(v)).map(v=>`<li>${v.replace(/ \((event)\)$/,'')}</li>`).join('');
@@ -1028,10 +1062,11 @@ function fillPiece(k){
   // credits: only show fields that have a real value
   const meta=[['Made for',CREDIT[k]],['Year',(YEAR||{})[k]],['Tools',(TOOLS||{})[k]]].filter(([,v])=>v&&v!=='TBC').map(([l,v])=>`<span><b>${l}</b>${v}</span>`).join('');
   $('#ppMeta').innerHTML=meta; $('#ppMeta').style.display=meta?'':'none';
+  ppText.classList.toggle('ask',!!SITE.prompts);
   ppText.innerHTML=`
     <span class="pill">${p.c}</span>
     <h2 id="ppTitle">${p.t}</h2>
-    <p class="sub">${p.s}</p>
+    <p class="sub">${p.s}</p>${SITE.prompts?`<p class="ask-note">Prompts for Hanzi to answer in her own words</p>`:''}
     <div class="pp-meta pp-meta-m">${meta}</div>
     <div><h4>The vision</h4><p class="vision">${p.v}</p></div>
     <div><h4>Design choices</h4><ul>${p.dc.map(d=>`<li>${d}</li>`).join('')}</ul></div>
