@@ -41,7 +41,7 @@ body.navhide .pillnav:not(:focus-within){transform:translate(-50%,-150%);opacity
 body.lock .pillnav{opacity:0;pointer-events:none}
 
 /* ================= 1 · INTRO ================= */
-.hero{position:relative;min-height:92svh;display:grid;place-content:center;justify-items:center;gap:20px;overflow:hidden;padding:60px 5vw 175px}
+.hero{position:relative;min-height:92svh;display:grid;place-content:center;justify-items:center;gap:20px;overflow:hidden;padding:60px 5vw 222px}
 .orb{position:absolute;border-radius:50%;filter:blur(70px);animation:float 30s ease-in-out infinite alternate}
 .hero.still .orb{animation-play-state:paused}
 .o-a{width:48vmax;height:48vmax;left:-16vmax;top:-10vmax;background:radial-gradient(circle,rgba(255,138,31,.95),transparent 68%)}
@@ -50,16 +50,16 @@ body.lock .pillnav{opacity:0;pointer-events:none}
 @keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(6vmax,3vmax) scale(1.12)}}
 .hero::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
-.hero h1{position:relative;z-index:2;white-space:nowrap;font-size:clamp(84px,min(19vw,34vh),300px);line-height:1;font-weight:400}
+.hero h1{position:relative;z-index:2;white-space:nowrap;font-size:clamp(84px,min(18vw,29vh),280px);line-height:1;font-weight:400}
 .hero h1 .l{display:inline-block;position:relative;height:1em;vertical-align:top;opacity:0;transform:translateY(.12em);filter:blur(10px);transition:opacity .9s ease,transform 1.1s cubic-bezier(.2,.8,.2,1),filter .9s ease}
 .hero.ready h1 .l{opacity:1;transform:none;filter:none}
 .hero p,.hero .enter{opacity:0;transform:translateY(14px);transition:opacity .9s ease .9s,transform .9s cubic-bezier(.2,.8,.2,1) .9s,background .3s}
 .hero .enter{transition-delay:1.15s,1.15s,0s}
 .hero.ready p,.hero.ready .enter{opacity:1;transform:none}
-.hero h1 .l i{position:absolute;left:50%;top:0;transform:translateX(-50%);display:block;font-style:normal;white-space:nowrap;line-height:1;opacity:0;filter:blur(5px);
-  transition:opacity .16s linear,filter .16s linear;
+.hero h1 .l i{position:absolute;left:50%;top:0;transform:translateX(-50%);display:block;font-style:normal;white-space:nowrap;line-height:1;opacity:0;
+  transition:opacity .07s linear;
   background:linear-gradient(180deg,#fff 30%,rgba(255,255,255,.28));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero h1 .l i.on{opacity:1;filter:none}
+.hero h1 .l i.on{opacity:1}
 .hero p{position:relative;z-index:2;font-size:clamp(19px,2.6vw,34px);color:rgba(255,255,255,.85)}
 .hero .enter{position:relative;z-index:2;margin-top:30px;font-size:18px;padding:17px 38px}
 .hero p.role{font-size:13px;letter-spacing:.22em;text-transform:uppercase;opacity:0;margin-top:-8px;transition:opacity .9s ease 1.3s}
@@ -71,9 +71,9 @@ body.lock .pillnav{opacity:0;pointer-events:none}
 .reel-track{display:flex;gap:38px;width:max-content;padding:10px 0;animation:reel var(--dur,70s) linear infinite}
 .reel:hover .reel-track,.reel:focus-within .reel-track{animation-play-state:paused}
 @keyframes reel{to{transform:translateX(calc(-1 * var(--set,50%)))}}
-.reel button{flex:none;height:118px;aspect-ratio:4/5;padding:5px;border-radius:14px;
+.reel button{flex:none;height:158px;aspect-ratio:4/5;padding:5px;border-radius:14px;
   background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.25);
-  box-shadow:0 10px 26px rgba(0,0,0,.35);opacity:.6;transition:opacity .4s,transform .4s cubic-bezier(.2,.8,.2,1)}
+  box-shadow:0 10px 26px rgba(0,0,0,.35);opacity:.95;transition:opacity .4s,transform .4s cubic-bezier(.2,.8,.2,1)}
 .reel button:hover,.reel button:focus-visible{opacity:1;transform:translateY(-6px) scale(1.06)}
 .reel img{display:block;width:100%;height:100%;object-fit:cover;border-radius:9px;pointer-events:none}
 
@@ -99,14 +99,15 @@ canvas.viz{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .ring{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.22,.8,.22,1)}
 .card{position:absolute;left:0;top:0;transform-style:preserve-3d;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:opacity .9s,filter .9s;cursor:pointer}
 .card.on{cursor:zoom-in}
-.fr{position:relative;padding:10px;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.38);
+.fr{position:relative;padding:6px;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.38);
   box-shadow:0 30px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.45);transition:transform 1s cubic-bezier(.22,.8,.22,1),box-shadow .6s}
-.fr .box{position:relative;height:clamp(280px,60vh,680px);aspect-ratio:4/5;border-radius:13px;overflow:hidden;display:grid;place-items:center;padding:4.5%;
+.fr .box{position:relative;height:clamp(280px,64vh,720px);aspect-ratio:4/5;border-radius:13px;overflow:hidden;display:grid;place-items:center;padding:4.5%;
   background:radial-gradient(120% 90% at 50% 40%,color-mix(in srgb,var(--ac) 16%,#16161a),#08080a);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.fr .box{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
 .fr .box.fill{padding:0}
 .fr .box::before{content:'';position:absolute;inset:-25%;background:var(--art) center/cover;filter:blur(30px) saturate(1.3) brightness(.36);opacity:.95}
 .fr .box.fill::before{display:none}
-.fr img{position:relative;z-index:1;display:block;max-width:100%;max-height:100%;width:auto;height:auto;border-radius:3px;box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.1);-webkit-user-drag:none;pointer-events:none}
+.fr img{position:relative;z-index:1;display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;place-self:center;border-radius:3px;box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.1);-webkit-user-drag:none;pointer-events:none}
 .fr .box.fill img{width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none}
 .card:not(.on) .fr{transform:scale(.8)}
 .fr::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;opacity:0;transition:opacity .5s;mix-blend-mode:screen;
@@ -117,7 +118,7 @@ canvas.viz{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .ct{position:absolute;left:50%;top:-56px;transform:translate(-50%,0) translateZ(110px);opacity:0;pointer-events:none;transition:opacity .5s .15s}
 .card.on .ct{opacity:1;animation:hov 3.2s ease-in-out infinite}
 @keyframes hov{50%{transform:translate(-50%,-7px) translateZ(110px)}}
-.cap{position:absolute;left:50%;top:calc(50% + clamp(150px,31vh,360px) + 40px);transform:translateX(-50%);width:min(92vw,520px);z-index:7;pointer-events:none}
+.cap{position:absolute;left:50%;top:calc(50% + clamp(150px,33vh,372px) + 38px);transform:translateX(-50%);width:min(92vw,520px);z-index:7;pointer-events:none}
 .cap b{display:block;font-size:24px;font-weight:600;line-height:1.15}
 .cap b,.cap i{text-shadow:0 2px 14px rgba(0,0,0,.6)}
 .cap i{display:block;font-style:normal;opacity:.85;font-size:15px;margin-top:4px}
@@ -135,8 +136,11 @@ canvas.viz{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .clients{margin:40px auto 0;display:grid;justify-items:center;gap:14px}
 .clients h4{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;font-weight:600}
 .clients ul{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:640px}
-.clients li{padding:9px 18px;border-radius:999px;font-size:15px;font-weight:600;
-  background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.22)}
+.clients li{display:block}
+.clients button{display:inline-flex;align-items:baseline;gap:9px;padding:9px 18px;border-radius:999px;font-size:15px;font-weight:600;
+  background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.22);transition:background .3s,transform .3s}
+.clients button:hover{background:linear-gradient(135deg,rgba(255,255,255,.28),rgba(255,255,255,.1));transform:translateY(-2px)}
+.clients small{font-size:12px;font-weight:400;opacity:.6;letter-spacing:.04em}
 .real{margin:46px auto 0;padding-top:36px;border-top:1px solid rgba(255,255,255,.2);display:grid;justify-items:center;gap:14px;max-width:34ch}
 .real h3{font-size:clamp(26px,3vw,38px);font-weight:700;line-height:1}
 .cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:6px}
@@ -202,12 +206,12 @@ footer{margin-top:5vh;font-size:13px;opacity:.55}
   .pp-meta-m{display:flex;margin-top:14px;justify-content:center}
   .pp{padding:11vh 6vw 14vh}
   .pp-next{left:50%;right:auto;transform:translateX(-50%);bottom:18px;white-space:nowrap;font-size:14px}
-  #piece::after{content:'';position:absolute;left:0;right:0;bottom:0;height:110px;z-index:4;pointer-events:none;background:linear-gradient(to bottom,transparent,rgba(5,6,12,.92) 70%)}
+  #piece::after{content:'';position:absolute;left:0;right:0;bottom:0;height:150px;z-index:4;pointer-events:none;background:linear-gradient(to bottom,transparent,rgba(5,6,12,.97) 55%)}
   .hero h1{font-size:27vw}
   #contact{padding-top:130px}
   .cap b{font-size:21px}
   #contact{padding:10vh 6vw 5vh}
-  .pp{grid-template-columns:1fr;gap:5vh;padding:11vh 6vw 8vh;text-align:center}
+  .pp{grid-template-columns:1fr;gap:5vh;padding:11vh 6vw 150px;text-align:center}
   .pp-art img{max-height:60vh}
   .pp-text .vision,.pp-text ul{margin-left:auto;margin-right:auto}
   .pp-text ul{text-align:left}
@@ -215,7 +219,7 @@ footer{margin-top:5vh;font-size:13px;opacity:.55}
   .hero{min-height:0;padding:96px 0 48px;gap:16px}
   .hero .enter{margin-top:14px}
   .reel{position:relative;bottom:auto;width:100vw;margin-top:22px}
-  .reel button{height:104px}
+  .reel button{height:136px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}}
 </style>
@@ -250,7 +254,7 @@ footer{margin-top:5vh;font-size:13px;opacity:.55}
 <!-- 3 · ABOUT + CONTACT -->
 <section class="panel" id="contact">
   <h2 class="poster-type">A little<br>about me.</h2>
-  <p class="bio">I'm a graphic designer passionate about turning ideas into reality through creative, impactful designs.</p>
+  <p class="bio">I make cover art, flyers, logos and campaigns for UK rap and street culture, from the first idea to the final artwork.</p>
   <p class="does">Cover art · Event flyers · Logos · Campaigns</p>
   <div class="clients"><h4>Worked with</h4><ul id="clients"></ul></div>
   <div class="real">
@@ -259,7 +263,7 @@ footer{margin-top:5vh;font-size:13px;opacity:.55}
     <div class="cta"><a class="gbtn" id="mailBtn" href="#">Start a project</a><a class="gbtn" id="igBtn" href="#" target="_blank" rel="noopener"></a></div>
     <button class="copy" id="copyMail" type="button"><span id="mailTxt"></span> · <span id="copyLbl">Copy</span></button>
   </div>
-  <footer>Concept redesign mockup, unofficial and for presentation only. Contact details and project write-ups are placeholders. Bad Route, Lacoste × LV, The City Is Your Track and Rush Hour are concept work in brand styles, not commissions. Stage photograph behind Power by Camille Roux on Unsplash.</footer>
+  <footer>Concept redesign mockup, unofficial and for presentation only. Contact details are placeholders, and the project write-ups are draft copy to be replaced with Hanzi's own words. Bad Route, Lacoste × LV, The City Is Your Track and Rush Hour are concept work in brand styles, not commissions. Stage photograph behind Power by Camille Roux on Unsplash.</footer>
 </section>
 
 <!-- SINGLE PIECE PAGE -->
@@ -285,9 +289,9 @@ const PAL = __PAL__;   // colours pulled from each cover at build time
 
 /* ---- one config block per site: swap SITE and P for the next artist ---- */
 const SITE = {
-  name:'Hanzi', tagline:'Your vision. My creativity.',
+  name:'Hanzi', tagline:'Cover art, flyers and campaigns for UK rap.',
   email:'hello@example.com', instagram:'hanzi_designs',   // contact details: placeholders until confirmed
-  prompts:true   // piece write-ups are prompts for Hanzi to answer in her own words
+  prompts:false  // piece write-ups are prompts for Hanzi to answer in her own words
 };
 $('#idTag').textContent = SITE.tagline;
 $('#mailBtn').href='mailto:'+SITE.email; $('#mailTxt').textContent=SITE.email;
@@ -304,64 +308,64 @@ $('#copyMail').addEventListener('click',async()=>{
 /* c = category, t = title, s = subtitle, v = creative vision, dc = design choices, viz = background scene */
 const P = {
   alpha:{c:'Music', t:'Alpha House', s:'Knucks × Venna, cover art', viz:'sun',
-    v:"What does Alpha House mean to you? Tell the story of the brief, and how the title became the house itself.",
-    dc:["Why build the house out of the letters?",
-        "Why the hot orange to midnight blue?",
-        "What did you deliberately leave off the cover?"],
+    v:"Alpha House is about where you come from and who you come up with. I wanted the title to become the house itself, so the name and the place are the same thing.",
+    dc:["Stacked, condensed black letters form the walls and the roof. The type is the illustration.",
+        "A sunset gradient runs from hot orange to midnight blue, warm at the centre and cooling at the edges.",
+        "Everything else stays out of the way: two names at the base and the advisory label, nothing more."],
     th:{ink:'#fff4e6',ac:'#ff8a1f',fd:"'Anton','Impact',sans-serif"}, br:.55},
   badroute:{c:'Music', t:'Bad Route', s:'Single art', viz:'dial',
-    v:"What is the “bad route” to the nice things, and why put a watch and a map together?",
-    dc:["Why rebuild the dial in deep blue?",
-        "Why hide a London map inside it?",
-        "Why keep the title small, like an engraving?"],
+    v:"Bad Route plays on taking the wrong road to get to the nice things. The watch and the map sit on top of each other, so the route and the reward can't be separated.",
+    dc:["A Submariner dial, rebuilt in deep blue, is the centrepiece. The clock is literally ticking.",
+        "An old London street map is printed into the dial's blue, so it reads as texture first and map second.",
+        "The title sits small in gold in the corner, closer to an engraving than a headline."],
     th:{ink:'#f2e3b4',ac:'#f2d27a',fd:"'Bebas Neue','Impact',sans-serif"}, br:.5},
   target:{c:'Music', t:'Untitled (Crosshair)', s:'Cover art', viz:'radar',
-    v:"Why no title and no face? What is the cover saying without saying it?",
-    dc:["Why light the figure only from behind?",
-        "Why one red crosshair and nothing else?",
-        "How did you keep it this quiet?"],
+    v:"No title and no face. The cover is about being watched, and being a target, without saying it out loud.",
+    dc:["The figure is lit from behind, so you only get the outline, never the expression.",
+        "One red crosshair sits between the shoulders. It's the only colour in the frame.",
+        "Heavy black and soft grain keep it quiet, so the red does all the talking."],
     th:{ink:'#ececec',ac:'#d11a2a',fd:"'Oswald','Impact',sans-serif"}, br:.5},
   smoke:{c:'Event Flyers', t:'Smoke and Paint', s:'Event flyer, 22+', viz:'smoke',
-    v:"What is the night like, and how did you make the flyer feel like the room?",
-    dc:["Why the blue duotone against hot orange?",
-        "Why hand-write “and paint”?",
-        "How did you decide where the details sit?"],
+    v:"Smoke and Paint is a creative night, so the flyer had to feel like the room: hazy, warm and a little loose.",
+    dc:["A blue duotone photo with a hot orange glow behind it, the same contrast as stage lights through smoke.",
+        "Bold block type for the name, broken up by a hand-written “and paint” so it never feels corporate.",
+        "Grain over everything, with the details stacked plainly in the corners so the image can breathe."],
     th:{ink:'#ffffff',ac:'#ff9a2e',fd:"'Archivo Black',sans-serif"}, br:.55},
   menace:{c:'Event Flyers', t:"Don't Be A Menace", s:'Event flyer, 22+', viz:'road',
-    v:"What should people feel before they read a single detail?",
-    dc:["Why paint the type onto the road?",
-        "Why the cobwebs?",
-        "Why keep it almost colourless, with one red line?"],
+    v:"Don't Be A Menace After Midnight sets the tone before you read a single detail: a quiet street, one lamp on, something about to happen.",
+    dc:["The type is painted onto the road in perspective, like markings on the crossing.",
+        "Cobwebs drape over the top of the frame for that late-night, slightly eerie feeling.",
+        "An almost colourless palette with one red line, so “After Midnight” glows."],
     th:{ink:'#ece4de',ac:'#e0302f',fd:"'Unbounded',sans-serif"}, br:.45},
   lacoste:{c:'Logos', t:'Lacoste × Louis Vuitton', s:'Logo mashup', viz:'monogram',
-    v:"What if two houses shared one mark? Where did this idea start?",
-    dc:["How did you keep the crocodile recognisable?",
-        "Why fill it with monogram pattern?",
-        "Why show two colourways side by side?"],
+    v:"What if two houses that never meet shared one mark? The crocodile belongs to one, the monogram to the other. Together they feel like a collab that could exist.",
+    dc:["The crocodile's silhouette is kept exact, so it's recognisable at a glance.",
+        "It's filled with monogram pattern instead of a flat colour.",
+        "Two colourways side by side show it working as a system, not a one-off."],
     th:{ink:'#f3ece2',ac:'#c79a68',fd:"'Playfair Display',serif"}, br:.6},
   power:{c:'Logos', t:'Power', s:'Wordmark', viz:'stage',
-    v:"What is Power about, and how does the wordmark carry it?",
-    dc:["Why hide the masks inside the letters?",
-        "Why such a heavy, wide typeface?",
-        "Why test it in black and in blue?"],
+    v:"Power is a drama, so the wordmark carries the theatre inside it.",
+    dc:["Comedy and tragedy masks are tucked into the letterforms, there if you look for them.",
+        "A heavy, wide typeface that feels solid and in control.",
+        "Tested in black and in blue to prove it holds up on any background."],
     th:{ink:'#ffffff',ac:'#3a6bff',fd:"'Archivo Black',sans-serif"}, br:.55},
   gabos:{c:'Marketing Campaigns', t:'Gabos London', s:'Campaign poster', viz:'street',
-    v:"Who is Gabos London for, and what did the campaign need to feel like?",
-    dc:["Why street-cast instead of models?",
-        "How did you land on “Born in London. Worn everywhere.”?",
-        "Why navy with one hit of orange?"],
+    v:"Gabos London is a streetwear brand rooted in the city, so the campaign needed to feel like real people, not models.",
+    dc:["Street-cast and shot at the door, so the clothes look lived in.",
+        "“Born in London. Worn everywhere.” does the positioning in five words.",
+        "Navy with a single hit of orange keeps it tight and on-brand."],
     th:{ink:'#ffffff',ac:'#ff6a1a',fd:"'Barlow Condensed','Arial Narrow',sans-serif"}, br:.5},
   nike:{c:'Marketing Campaigns', t:'The City Is Your Track', s:'Campaign poster', viz:'bridge',
-    v:"How does a commute become a race? Tell the idea behind the campaign.",
-    dc:["Why Tower Bridge?",
-        "Why the low, wide framing?",
-        "Why dark tones with a red accent?"],
+    v:"The City Is Your Track turns the commute into a race course. London isn't the backdrop, it's the track.",
+    dc:["A runner mid-stride on Tower Bridge, the most recognisable crossing in the city.",
+        "Low, wide framing makes the bridge feel like a stadium.",
+        "Dark tones with a red accent for energy, and a short, punchy headline."],
     th:{ink:'#ffffff',ac:'#e3173e',fd:"'Archivo Black',sans-serif"}, br:.5},
   tfl:{c:'Marketing Campaigns', t:'Rush Hour', s:'Campaign poster', viz:'tube',
-    v:"What is the feeling of rush hour you wanted to flip?",
-    dc:["Why pick out one face in blue?",
-        "Why a reassuring headline instead of a telling-off?",
-        "How did you make it read like a real transport poster?"],
+    v:"Rush Hour turns the stress of running late into something everyone shares. Look at the crowd: everyone's in the same rush.",
+    dc:["A black-and-white crowd with one face picked out in blue, so you find yourself in it.",
+        "The headline is reassuring rather than a telling-off: you're not late, you're just in rush hour.",
+        "The roundel and a plain sans-serif keep it reading like a real transport poster."],
     th:{ink:'#ffffff',ac:'#dc241f',fd:"'Inter',sans-serif"}, br:.5}
 };
 /* credits under each piece: fill in with the artist (TBC = to confirm) */
@@ -371,6 +375,9 @@ const CREDIT = {
 };
 const YEAR = {};   // e.g. alpha:'2024'
 const TOOLS = {};  // e.g. alpha:'Photoshop'
+const CONCEPT = ['badroute','lacoste','nike','tfl'];   // self-initiated work in brand styles
+const cat = k => P[k].c + (CONCEPT.includes(k) ? ' · Concept' : '');
+const WORKED = [['alpha','Knucks × Venna','cover art'],['gabos','Gabos London','campaign'],['smoke','Smoke and Paint','event flyer'],['menace',"Don't Be A Menace",'event flyer'],['power','Power','wordmark']];
 const ORDER = ['alpha','smoke','gabos','lacoste','badroute','nike','menace','power','target','tfl'];  // no two neighbours share a category, wrap-around included
 const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
@@ -443,9 +450,9 @@ const SCENES = {
       c.fillStyle=hexA('#ff9a3a',.1); c.fillRect(b.x,b.y,2,b.h);   // rim light down the sunlit edge
     });
     S.win.forEach(wd=>{ const b=S.blocks[wd.bi], fh=b.h/b.fl, cw=b.w/b.cols;
-      const lit=wd.on<(.15+dusk*.7); if(!lit) return;
+      const lit=wd.on<(.08+dusk*.42); if(!lit) return;
       const x=b.x+wd.q*cw+cw*.25, y=b.y+wd.f*fh+fh*.3, ww=cw*.5, wh=fh*.45;
-      let col='#ffc46b', a=.38+.1*Math.sin(t*.5+wd.ph); if(wd.tv){ col='#8fb0ff'; a=.2+.25*Math.abs(Math.sin(t*6+wd.ph)*Math.sin(t*1.9)); }
+      let col='#ffc46b', a=.24+.06*Math.sin(t*.5+wd.ph); if(wd.tv){ col='#8fb0ff'; a=.2+.25*Math.abs(Math.sin(t*6+wd.ph)*Math.sin(t*1.9)); }
       c.fillStyle=hexA(col,a); c.fillRect(x,y,ww,wh); });
     // a siren passing below, washing the block blue then red
     const sc=(t%15)/15; if(sc<.22){ const q=sc/.22, sx=(-.3+q*1.6)*w, blue=Math.sin(t*3)>0;
@@ -846,7 +853,7 @@ const SCENES = {
       S.lines.forEach((l,i)=>{ l.sp=.02+(i%3)*.006; l.o=i*.17; }); }
     c.save(); c.beginPath(); c.rect(0,0,w,hy); c.clip(); c.translate(0,-h*.06);
     c.lineJoin='round'; c.lineCap='round';
-    S.lines.forEach(L=>{ c.strokeStyle=hexA(L.col,L.col==='#dc241f'?.16:.1); c.lineWidth=L.wd; c.beginPath(); L.pts.forEach(([x,y],j)=>j?c.lineTo(x*w,y*h*.6):c.moveTo(x*w,y*h*.6)); c.stroke();
+    S.lines.forEach(L=>{ c.strokeStyle=hexA(L.col,L.col==='#dc241f'?.09:.055); c.lineWidth=L.wd; c.beginPath(); L.pts.forEach(([x,y],j)=>j?c.lineTo(x*w,y*h*.6):c.moveTo(x*w,y*h*.6)); c.stroke();
       let d=((L.o+t*L.sp)%1)*L.len, j=0; while(j<L.seg.length-1&&d>L.seg[j]){ d-=L.seg[j]; j++; }
       const a=L.pts[j], b=L.pts[j+1], fr=Math.min(1,d/L.seg[j]), x=(a[0]+(b[0]-a[0])*fr)*w, y=(a[1]+(b[1]-a[1])*fr)*h*.6;
       const g=c.createRadialGradient(x,y,0,x,y,9); g.addColorStop(0,'rgba(255,255,255,.45)'); g.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=g; c.fillRect(x-9,y-9,18,18); });
@@ -943,7 +950,7 @@ const fontWeight = f => /Playfair/.test(f)?900 : /Archivo/.test(f)?400 : /Barlow
     slot.innerHTML=`<i>${ch}</i><i>${ch}</i>`; slot._a=0; slot.style.transitionDelay=(letters.indexOf(ch)*0)+'s'; h.appendChild(slot); return slot;
   });
   const cv=document.createElement('canvas').getContext('2d'), CAP=0.72, BASE=0.84;
-  let M=[], idx=[], allowed=[];
+  let M=[], idx=[], allowed=[], W=[], MED=[], started=false;
   function measure(){
     M=NAME_FONTS.map(f=>{
       const w=fontWeight(f); cv.font=`${w} 100px ${f}`;
@@ -959,11 +966,14 @@ const fontWeight = f => /Playfair/.test(f)?900 : /Archivo/.test(f)?400 : /Barlow
       // keep fonts within a narrow width band around the median; if too few qualify, take the closest four
       let band=ws.map((w,j)=>w>=med*.88&&w<=med*1.08?j:-1).filter(j=>j>=0);
       if(band.length<4) band=ws.map((w,j)=>[Math.abs(w-med),j]).sort((a,b)=>a[0]-b[0]).slice(0,4).map(x=>x[1]);
-      allowed[i]=band;
-      const max=Math.max(...allowed[i].map(j=>ws[j]));
-      slots[i].style.width=(max+0.015)+'em';
+      allowed[i]=band; W[i]=ws; MED[i]=med;
     });
-    letters.forEach((_,i)=>{ if(idx[i]==null) idx[i]=allowed[i].includes(0)?0:allowed[i][0]; else if(!allowed[i].includes(idx[i])) idx[i]=pickFont(i); show(i,false); });
+    // the name lands in ONE typeface: the font that fits every letter's band best (never much wider than its slot)
+    const cost=j=>letters.reduce((a,_,i)=>a+Math.max(0,W[i][j]-Math.max(...allowed[i].map(q=>W[i][q])))*8+Math.abs(W[i][j]-MED[i]),0);
+    const home=M.map((_,j)=>j).sort((a,b)=>cost(a)-cost(b))[0];
+    letters.forEach((_,i)=>{ if(!allowed[i].includes(home)) allowed[i].unshift(home);
+      slots[i].style.width=(Math.max(...allowed[i].map(j=>W[i][j]))+0.015)+'em';
+      if(!started||idx[i]==null) idx[i]=home; else if(!allowed[i].includes(idx[i])) idx[i]=pickFont(i); show(i,false); });
   }
   function pickFont(i){
     const opts=allowed[i].filter(j=>j!==idx[i]&&j!==idx[i-1]&&j!==idx[i+1]);
@@ -989,7 +999,7 @@ const fontWeight = f => /Playfair/.test(f)?900 : /Archivo/.test(f)?400 : /Barlow
     let p=0;   // a wave runs left to right, one letter every 90ms, so each letter turns over roughly every 0.45s
     let heroOn=true;
     new IntersectionObserver(es=>{ heroOn=es[0].isIntersecting; hero.classList.toggle('still',!heroOn); }).observe(hero);
-    setTimeout(()=>setInterval(()=>{ if(!heroOn||document.hidden) return; idx[p]=pickFont(p); show(p,true); p=(p+1)%L; },90),1900);   // ...then starts shifting
+    setTimeout(()=>{ started=true; setInterval(()=>{ if(!heroOn||document.hidden) return; idx[p]=pickFont(p); show(p,true); p=(p+1)%L; },90); },3400);   // ...then starts shifting
   });
 })();
 
@@ -1000,7 +1010,7 @@ const ring=$('#ring'), stage=$('#stage'), gbs=$('#gbs'), cap=$('#cap'), galSec=$
 const N=ORDER.length, STEP=360/N;
 let R=840, rot=0, active=0;
 gbs.innerHTML = ORDER.map(k=>`<div class="gb" style="background-image:url(${IMG[k]});--br:${P[k].br}"></div>`).join('');
-ring.innerHTML = ORDER.map((k,i)=>`<div class="card" data-i="${i}" style="--ac:${P[k].th.ac}"><span class="ct pill" aria-hidden="true">${P[k].c}</span><div class="fr"><div class="box" style="--art:url(${IMG[k]})"><img src="${IMG[k]}" alt="${P[k].t}"></div></div></div>`).join('');
+ring.innerHTML = ORDER.map((k,i)=>`<div class="card" data-i="${i}" style="--ac:${P[k].th.ac}"><span class="ct pill" aria-hidden="true">${cat(k)}</span><div class="fr"><div class="box" style="--art:url(${IMG[k]})"><img src="${IMG[k]}" alt="${P[k].t}"></div></div></div>`).join('');
 // pieces close to the frame's 4:5 shape fill it; others sit matted like a print
 [...ring.querySelectorAll('.box img')].forEach(im=>{ const f=()=>{ const ar=im.naturalWidth/im.naturalHeight; im.parentNode.classList.toggle('fill', ar>.7&&ar<.95); }; im.complete?f():im.addEventListener('load',f); });
 const cards=[...ring.children], gbl=[...gbs.children];
@@ -1021,7 +1031,8 @@ buildReel();
 let reelT; addEventListener('resize',()=>{ clearTimeout(reelT); reelT=setTimeout(buildReel,200); });
 $('#reelTrack').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; goTo(ORDER.indexOf(b.dataset.k)); openPiece(b.dataset.k,b.querySelector('img')); });
 // about: real clients only, no TBC or self-initiated work
-$('#clients').innerHTML=[...new Set(Object.values(CREDIT))].filter(v=>v&&v!=='TBC'&&!/self-initiated/i.test(v)).map(v=>`<li>${v.replace(/ \((event)\)$/,'')}</li>`).join('');
+$('#clients').innerHTML=WORKED.map(([k,n,w])=>`<li><button type="button" data-k="${k}">${n}<small>${w}</small></button></li>`).join('');
+$('#clients').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; galSec.scrollIntoView({behavior:reduced?'auto':'smooth'}); setTimeout(()=>goTo(ORDER.indexOf(b.dataset.k)),reduced?0:700); });
 const galViz=new Viz($('#galViz'),TOUCH?.5:.7);
 
 function layout(){
@@ -1035,7 +1046,7 @@ function paint(){
   cards.forEach((c,i)=>{
     const d = Math.abs(circ(i-active));
     c.classList.toggle('on', d===0);
-    c.style.opacity = d>vis ? 0 : (d===0?1:.5);
+    c.style.opacity = d>vis ? 0 : (d===0?1:.8);
     c.style.filter = 'none';
     c.style.visibility = d>vis+1 ? 'hidden' : 'visible';   // far cards stop costing anything
     c.style.pointerEvents = d>vis ? 'none' : 'auto';
@@ -1140,7 +1151,7 @@ function fillPiece(k){
   $('#ppMeta').innerHTML=meta; $('#ppMeta').style.display=meta?'':'none';
   ppText.classList.toggle('ask',!!SITE.prompts);
   ppText.innerHTML=`
-    <span class="pill">${p.c}</span>
+    <span class="pill">${cat(k)}</span>
     <h2 id="ppTitle">${p.t}</h2>
     <p class="sub">${p.s}</p>${SITE.prompts?`<p class="ask-note">Prompts for Hanzi to answer in her own words</p>`:''}
     <div class="pp-meta pp-meta-m">${meta}</div>
