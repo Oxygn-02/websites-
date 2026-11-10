@@ -1,7 +1,7 @@
 """Build: python3 build.py [src/template.html] [dist/hanzi-designs-mockup.html]
 Embeds assets/art/*.png as base64 JPEG (max 900px) into __IMG__ and extracts 5-colour palettes into __PAL__."""
 import base64, io, json, sys
-from PIL import Image
+from PIL import Image, ImageFilter
 
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -23,9 +23,14 @@ imgs = {}
 pals = {}
 for key, fn in ORDER:
     im = Image.open(U + fn).convert('RGB')
-    if max(im.size) > 900:
-        im.thumbnail((900, 900))
-    q = im.copy(); q.thumbnail((180,180))
+    pal_src = im.copy()   # palette is taken from the same 900px-capped image as before, so the colours do not shift
+    if max(pal_src.size) > 900:
+        pal_src.thumbnail((900, 900))
+    if max(im.size) < 800:   # the supplied art is small; enlarge it cleanly so it can be shown big
+        im = im.resize((im.width*2, im.height*2), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=1.4, percent=55, threshold=2))
+    if max(im.size) > 1100:
+        im.thumbnail((1100, 1100), Image.LANCZOS)
+    q = pal_src; q.thumbnail((180,180))
     px = list((q.get_flattened_data() if hasattr(q,'get_flattened_data') else q.getdata())); tot = len(px)
     buckets = {}
     for p in px:  # group into coarse colour bins, keep the average colour of each bin
@@ -64,7 +69,7 @@ for key, fn in ORDER:
     picked.sort(key=lambda c: .3*c[0]+.59*c[1]+.11*c[2])
     pals[key] = ['#%02x%02x%02x' % c for c in picked]
     buf = io.BytesIO()
-    im.save(buf, 'JPEG', quality=88, optimize=True)
+    im.save(buf, 'JPEG', quality=86, optimize=True)
     imgs[key] = 'data:image/jpeg;base64,' + base64.b64encode(buf.getvalue()).decode()
 
 # photographed backdrops (only Power has one): assets/plates/<key>.jpg, embedded as data URIs

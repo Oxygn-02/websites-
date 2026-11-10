@@ -22,7 +22,8 @@ open dist/hanzi-designs-mockup.html
 | `src/template.html` | The whole site: CSS, markup and JS, about 1,100 lines |
 | `build.py` | Embeds the art and palettes |
 | `assets/art/*.png` | The 10 original artworks, named by key |
-| `dist/hanzi-designs-mockup.html` | Latest build (v24): soft, natural light via `softBeam`/`flare`/`pool` helpers |
+| `dist/hanzi-designs-mockup.html` | Latest build (v25): 2x-upscaled art, tilting front card, contact reveal |
+| `archive/v24-natural-light.html` | v24: soft, natural light via `softBeam`/`flare`/`pool` helpers |
 | `archive/v23-contact-prompts.html` | v23: contact options, endless reel, write-up prompts |
 | `archive/v22-tight-name.html` | v22: tight name, blurred-art mats, auto-hiding nav |
 | `archive/v21-cover-reel.html` | v21: drawn scenes, intro cover reel, client list |
